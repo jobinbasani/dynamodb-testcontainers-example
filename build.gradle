@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'com.jobinbasani'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 14
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def junitJupiterVersion = '5.6.2'
+    implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.847')
+    implementation 'com.amazonaws:aws-java-sdk-dynamodb'
+    testCompile "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testCompile "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+    testCompile "org.testcontainers:testcontainers:1.14.3"
+    testCompile "org.testcontainers:junit-jupiter:1.14.3"
+}
