@@ -5,7 +5,7 @@ plugins {
 group 'com.jobinbasani'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 14
+sourceCompatibility = 13
 
 repositories {
     mavenCentral()
@@ -20,4 +20,8 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
     testCompile "org.testcontainers:testcontainers:1.14.3"
     testCompile "org.testcontainers:junit-jupiter:1.14.3"
+}
+
+test {
+    useJUnitPlatform()
 }
