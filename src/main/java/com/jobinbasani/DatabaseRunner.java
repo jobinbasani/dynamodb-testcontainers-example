@@ -13,7 +13,7 @@ public class DatabaseRunner {
 
     private final DatabaseService databaseService;
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         if (args.length != 2) {
             System.err.println("Valid arguments <action> <tablename>");
             return;
@@ -33,7 +33,7 @@ public class DatabaseRunner {
     public void runMain(String action, String tableName) {
         TableResponse response;
         switch (action.toLowerCase()) {
-            case "create":
+            case "create" -> {
                 response = databaseService.createTable(tableName, List.of(new KeySchemaElement("year", KeyType.HASH)),
                         List.of(new AttributeDefinition("year", ScalarAttributeType.S)),
                         new ProvisionedThroughput(1L, 1L));
@@ -42,18 +42,16 @@ public class DatabaseRunner {
                 } else {
                     System.out.printf("Error creating %s - %s", tableName, response.getMessage());
                 }
-                break;
-            case "delete":
+            }
+            case "delete" -> {
                 response = databaseService.deleteTable(tableName);
                 if (response.isSuccess()) {
                     System.out.printf("%s deleted!", tableName);
                 } else {
                     System.out.printf("Error deleting %s - %s", tableName, response.getMessage());
                 }
-                break;
-            default:
-                System.err.println("Invalid action specified. Valid options are - create, delete");
-                break;
+            }
+            default -> System.err.println("Invalid action specified. Valid options are - create, delete");
         }
     }
 }
