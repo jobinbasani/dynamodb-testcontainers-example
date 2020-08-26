@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.jobinbasani.vo.TableResponse;
 
 import java.util.List;
 
@@ -18,17 +19,29 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public void createTable(String tableName, List<KeySchemaElement> keys, List<AttributeDefinition> attributes, ProvisionedThroughput throughput) throws InterruptedException {
-        Table table = dynamoDB.createTable(tableName, keys, attributes, throughput);
-        table.waitForActive();
-        System.out.println("Success.  Table status: " + table.getDescription().getTableStatus());
+    public TableResponse createTable(String tableName, List<KeySchemaElement> keys, List<AttributeDefinition> attributes, ProvisionedThroughput throughput) {
+        TableResponse response = new TableResponse();
+        try {
+            Table table = dynamoDB.createTable(tableName, keys, attributes, throughput);
+            table.waitForActive();
+            response.setSuccess(true);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+        }
+        return response;
     }
 
     @Override
-    public void deleteTable(String tableName) throws InterruptedException {
-        Table table = dynamoDB.getTable(tableName);
-        table.delete();
-        table.waitForDelete();
-        System.out.println(tableName + "deleted!");
+    public TableResponse deleteTable(String tableName) {
+        TableResponse response = new TableResponse();
+        try {
+            Table table = dynamoDB.getTable(tableName);
+            table.delete();
+            table.waitForDelete();
+            response.setSuccess(true);
+        } catch (Exception e) {
+            response.setMessage(e.getMessage());
+        }
+        return response;
     }
 }

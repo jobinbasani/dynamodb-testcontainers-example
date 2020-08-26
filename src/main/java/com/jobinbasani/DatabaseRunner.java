@@ -1,11 +1,11 @@
 package com.jobinbasani;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.model.*;
 import com.jobinbasani.service.DatabaseService;
 import com.jobinbasani.service.DatabaseServiceImpl;
+import com.jobinbasani.vo.TableResponse;
 
 import java.util.List;
 
@@ -31,17 +31,28 @@ public class DatabaseRunner {
     }
 
     public void runMain(String action, String tableName) throws InterruptedException {
+        TableResponse response;
         switch (action.toLowerCase()) {
             case "create":
-                databaseService.createTable(tableName, List.of(new KeySchemaElement("year", KeyType.HASH)),
+                response = databaseService.createTable(tableName, List.of(new KeySchemaElement("year", KeyType.HASH)),
                         List.of(new AttributeDefinition("year", ScalarAttributeType.S)),
                         new ProvisionedThroughput(1L, 1L));
-                System.out.println("Created table " + tableName);
+                if (response.isSuccess()) {
+                    System.out.printf("%s created!", tableName);
+                }else{
+                    System.out.printf("Error creating %s - %s", tableName, response.getMessage());
+                }
                 break;
             case "delete":
-                databaseService.deleteTable(tableName);
-                System.out.println("Deleted table " + tableName);
+                response = databaseService.deleteTable(tableName);
+                if (response.isSuccess()) {
+                    System.out.printf("%s deleted!", tableName);
+                }else{
+                    System.out.printf("Error deleting %s - %s", tableName, response.getMessage());
+                }
                 break;
+            default:
+                System.err.println("Invalid action specified. Valid options are - create, delete");
         }
     }
 }
