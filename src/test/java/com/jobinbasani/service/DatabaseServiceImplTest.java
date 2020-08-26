@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 class DatabaseServiceImplTest {
 
     @Container
-    static GenericContainer dynamoDb = new GenericContainer("amazon/dynamodb-local:1.13.2")
+    static final GenericContainer dynamoDb = new GenericContainer("amazon/dynamodb-local:1.13.2")
             .withCommand("-jar DynamoDBLocal.jar -inMemory -sharedDb")
             .withExposedPorts(8000);
     DatabaseService databaseService;
@@ -30,8 +30,9 @@ class DatabaseServiceImplTest {
 
     @BeforeAll
     public void init() {
+        var endpointUrl = String.format("http://localhost:%d", dynamoDb.getFirstMappedPort());
         AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:" + dynamoDb.getFirstMappedPort(), "us-west-2"))
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpointUrl, "us-west-2"))
                 .build();
         databaseService = new DatabaseServiceImpl(client);
         tableName = "TestTable";
@@ -44,7 +45,6 @@ class DatabaseServiceImplTest {
                 List.of(new AttributeDefinition("year", ScalarAttributeType.S)),
                 new ProvisionedThroughput(1L, 1L));
         assertTrue(response.isSuccess());
-
     }
 
     @Test

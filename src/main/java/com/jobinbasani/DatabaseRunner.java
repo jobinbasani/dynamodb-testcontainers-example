@@ -30,7 +30,7 @@ public class DatabaseRunner {
         databaseService = new DatabaseServiceImpl(client);
     }
 
-    public void runMain(String action, String tableName) throws InterruptedException {
+    public void runMain(String action, String tableName) {
         TableResponse response;
         switch (action.toLowerCase()) {
             case "create":
@@ -39,7 +39,7 @@ public class DatabaseRunner {
                         new ProvisionedThroughput(1L, 1L));
                 if (response.isSuccess()) {
                     System.out.printf("%s created!", tableName);
-                }else{
+                } else {
                     System.out.printf("Error creating %s - %s", tableName, response.getMessage());
                 }
                 break;
@@ -47,12 +47,13 @@ public class DatabaseRunner {
                 response = databaseService.deleteTable(tableName);
                 if (response.isSuccess()) {
                     System.out.printf("%s deleted!", tableName);
-                }else{
+                } else {
                     System.out.printf("Error deleting %s - %s", tableName, response.getMessage());
                 }
                 break;
             default:
                 System.err.println("Invalid action specified. Valid options are - create, delete");
+                break;
         }
     }
 }
