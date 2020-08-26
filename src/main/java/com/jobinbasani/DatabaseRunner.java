@@ -6,16 +6,19 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import com.jobinbasani.service.DatabaseService;
 import com.jobinbasani.service.DatabaseServiceImpl;
 import com.jobinbasani.vo.TableResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class DatabaseRunner {
 
     private final DatabaseService databaseService;
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseRunner.class);
 
     public static void main(String[] args) {
         if (args.length != 2) {
-            System.err.println("Valid arguments <action> <tablename>");
+            logger.error("Valid arguments <action> <tablename>");
             return;
         }
         String action = args[0];
@@ -38,20 +41,20 @@ public class DatabaseRunner {
                         List.of(new AttributeDefinition("year", ScalarAttributeType.S)),
                         new ProvisionedThroughput(1L, 1L));
                 if (response.isSuccess()) {
-                    System.out.printf("%s created!", tableName);
+                    logger.info(tableName+" created!");
                 } else {
-                    System.out.printf("Error creating %s - %s", tableName, response.getMessage());
+                    logger.error("Error creating " + tableName + " - " + response.getMessage());
                 }
             }
             case "delete" -> {
                 response = databaseService.deleteTable(tableName);
                 if (response.isSuccess()) {
-                    System.out.printf("%s deleted!", tableName);
+                    logger.info(tableName + " deleted!");
                 } else {
-                    System.out.printf("Error deleting %s - %s", tableName, response.getMessage());
+                    logger.error("Error deleting " + tableName + " - " + response.getMessage());
                 }
             }
-            default -> System.err.println("Invalid action specified. Valid options are - create, delete");
+            default -> logger.error("Invalid action specified. Valid options are - create, delete");
         }
     }
 }
